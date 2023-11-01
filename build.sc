@@ -14,7 +14,8 @@ object app extends ScalaModule {
   )
 
   def ivyDeps = Agg(
-    ivy"ba.sake::sharaf:0.0.11"
+    ivy"ba.sake::sharaf:0.0.11",
+    ivy"ch.qos.logback:logback-classic:1.4.6"
   )
 
   object test extends ScalaTests with TestModule.Munit {
