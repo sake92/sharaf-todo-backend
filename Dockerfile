@@ -13,4 +13,6 @@ FROM eclipse-temurin:17.0.8_7-jre-alpine
 
 COPY --from=build out/app/assembly.dest/out.jar app.jar
 
+EXPOSE 8181
+
 ENTRYPOINT ["java", "-jar", "app.jar"]
