@@ -50,7 +50,7 @@ import ba.sake.sharaf.*, handlers.*, routing.*
 
   val server = Undertow
     .builder()
-    .addHttpListener(port, "localhost")
+    .addHttpListener(port, "0.0.0.0")
     .setHandler(
       SharafHandler(routes)
         .withCorsSettings(CorsSettings(allowedOrigins = Set("https://todobackend.com")))
@@ -59,7 +59,7 @@ import ba.sake.sharaf.*, handlers.*, routing.*
 
   server.start()
 
-  println(s"Started HTTP server at http://localhost:${port}")
+  println(s"Started HTTP server at http://0.0.0.0:${port}")
 }
 
 case class CreateTodo(title: String, order: Option[Int]) derives JsonRW
