@@ -3,6 +3,8 @@ import mill.scalalib._
 
 object app extends ScalaModule {
 
+  def mainClass = T(Some("ba.sake.todo.backend.main"))
+
   def scalaVersion = "3.3.1"
 
   def scalacOptions = super.scalacOptions() ++ Seq(

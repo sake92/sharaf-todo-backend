@@ -4,7 +4,7 @@ FROM eclipse-temurin:17 as build
 COPY mill .
 COPY .mill-version .
 COPY build.sc .
-COPY todo .
+COPY app/ app/
 
 RUN ./mill app.assembly
 
