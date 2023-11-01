@@ -1,7 +1,7 @@
 import mill._
 import mill.scalalib._
 
-object todo extends ScalaModule {
+object app extends ScalaModule {
 
   def scalaVersion = "3.3.1"
 
