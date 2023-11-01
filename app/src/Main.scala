@@ -2,13 +2,16 @@ package ba.sake.todo.backend
 
 import java.util.UUID
 import io.undertow.Undertow
+import com.typesafe.config.ConfigFactory
 import ba.sake.tupson.*
 import ba.sake.validson.*
-import ba.sake.sharaf.*, handlers.*, routing.*
+import ba.sake.sharaf.handlers.CorsSettings
+import ba.sake.sharaf.*, routing.*, utils.*
 
 @main def main: Unit = {
 
-  val todosRepo = new TodosRepo
+  val config = ConfigFactory.load().parse[TodoBackendConfig]()
+  val todosRepo = new TodosRepo(config.baseUrl)
 
   def todo2Resp(t: Todo): TodoResponse =
     TodoResponse(t.title, t.completed, t.url, t.order)
@@ -59,12 +62,29 @@ import ba.sake.sharaf.*, handlers.*, routing.*
 
   server.start()
 
-  println(s"Started HTTP server at http://0.0.0.0:${port}")
+  println(s"Started HTTP server at http://localhost:${port}")
 }
 
-case class CreateTodo(title: String, order: Option[Int]) derives JsonRW
+// app config
+case class TodoBackendConfig(baseUrl: String) derives JsonRW
 
-case class PatchTodo(title: Option[String], completed: Option[Boolean], url: Option[String], order: Option[Int])
-    derives JsonRW
+//  requests
+case class CreateTodo(
+    title: String,
+    order: Option[Int]
+) derives JsonRW
 
-case class TodoResponse(title: String, completed: Boolean, url: String, order: Option[Int]) derives JsonRW
+case class PatchTodo(
+    title: Option[String],
+    completed: Option[Boolean],
+    url: Option[String],
+    order: Option[Int]
+) derives JsonRW
+
+//  responses
+case class TodoResponse(
+    title: String,
+    completed: Boolean,
+    url: String,
+    order: Option[Int]
+) derives JsonRW

@@ -15,4 +15,4 @@ COPY --from=build out/app/assembly.dest/out.jar app.jar
 
 EXPOSE 8181
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Dconfig.override_with_env_vars=true", "-jar", "app.jar"]

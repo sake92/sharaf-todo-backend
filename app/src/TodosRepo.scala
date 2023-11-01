@@ -1,12 +1,11 @@
 package ba.sake.todo.backend
 
 import java.util.UUID
-import ba.sake.tupson.JsonRW
 
-case class Todo(id: UUID, title: String, completed: Boolean, url: String, order: Option[Int]) derives JsonRW
+case class Todo(id: UUID, title: String, completed: Boolean, url: String, order: Option[Int])
 
 // dont do this synchronized stuff at home!
-class TodosRepo {
+class TodosRepo(baseUrl: String) {
 
   private var todosRef = List.empty[Todo]
 
@@ -20,13 +19,13 @@ class TodosRepo {
 
   def add(req: CreateTodo): Todo = todosRef.synchronized {
     val id = UUID.randomUUID()
-    val newTodo = Todo(id, req.title, false, s"http://localhost:8181/todos/${id}", req.order)
+    val newTodo = Todo(id, req.title, false, s"${baseUrl}/todos/${id}", req.order)
     todosRef = todosRef.appended(newTodo)
     newTodo
   }
 
   def set(t: Todo): Unit = todosRef.synchronized {
-    todosRef = todosRef.filterNot(_.id == t.id) :+ t
+    todosRef = todosRef.filterNot(_.id == t.id).appended(t)
   }
 
   def delete(id: UUID): Unit = todosRef.synchronized {
