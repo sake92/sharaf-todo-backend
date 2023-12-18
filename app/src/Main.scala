@@ -4,30 +4,29 @@ import java.util.UUID
 import io.undertow.Undertow
 import com.typesafe.config.ConfigFactory
 import ba.sake.tupson.*
+import ba.sake.tupson.config.*
 import ba.sake.validson.*
-import ba.sake.sharaf.handlers.CorsSettings
-import ba.sake.sharaf.*, routing.*, utils.*
+import ba.sake.sharaf.handlers.cors.CorsSettings
+import ba.sake.sharaf.*, routing.*
 
 @main def main: Unit = {
 
-  val config = ConfigFactory.load().parse[TodoBackendConfig]()
+  val config = ConfigFactory.load.parseConfig[TodoBackendConfig]
   val todosRepo = new TodosRepo(config.baseUrl)
 
-  def todo2Resp(t: Todo): TodoResponse =
-    TodoResponse(t.title, t.completed, t.url, t.order)
-
-  val routes: Routes = {
+  val routes = Routes {
     case GET() -> Path() =>
-      Response.withBody(todosRepo.getTodos().map(todo2Resp))
+      val res = todosRepo.getTodos().map(TodoResponse.fromTodo)
+      Response.withBody(res)
 
     case GET() -> Path("todos", param[UUID](id)) =>
       val todo = todosRepo.getTodo(id)
-      Response.withBody(todo2Resp(todo))
+      Response.withBody(TodoResponse.fromTodo(todo))
 
     case POST() -> Path() =>
       val reqBody = Request.current.bodyJsonValidated[CreateTodo]
       val newTodo = todosRepo.add(reqBody)
-      Response.withBody(todo2Resp(newTodo))
+      Response.withBody(TodoResponse.fromTodo(newTodo))
 
     case DELETE() -> Path() =>
       todosRepo.deleteAll()
@@ -35,7 +34,7 @@ import ba.sake.sharaf.*, routing.*, utils.*
 
     case DELETE() -> Path("todos", param[UUID](id)) =>
       todosRepo.delete(id)
-      Response.withBody(todosRepo.getTodos().map(todo2Resp))
+      Response.withBody(todosRepo.getTodos().map(TodoResponse.fromTodo))
 
     case PATCH() -> Path("todos", param[UUID](id)) =>
       val reqBody = Request.current.bodyJsonValidated[PatchTodo]
@@ -45,7 +44,7 @@ import ba.sake.sharaf.*, routing.*, utils.*
       reqBody.url.foreach(u => todo = todo.copy(url = u))
       reqBody.order.foreach(o => todo = todo.copy(order = Some(o)))
       todosRepo.set(todo)
-      Response.withBody(todo2Resp(todo))
+      Response.withBody(TodoResponse.fromTodo(todo))
 
   }
 
@@ -55,8 +54,9 @@ import ba.sake.sharaf.*, routing.*, utils.*
     .builder()
     .addHttpListener(port, "0.0.0.0")
     .setHandler(
-      SharafHandler(routes)
-        .withCorsSettings(CorsSettings(allowedOrigins = Set("https://todobackend.com")))
+      SharafHandler(routes).withCorsSettings(
+        CorsSettings.default.withAllowedOrigins(Set("https://todobackend.com"))
+      )
     )
     .build()
 
@@ -67,24 +67,3 @@ import ba.sake.sharaf.*, routing.*, utils.*
 
 // app config
 case class TodoBackendConfig(baseUrl: String) derives JsonRW
-
-//  requests
-case class CreateTodo(
-    title: String,
-    order: Option[Int]
-) derives JsonRW
-
-case class PatchTodo(
-    title: Option[String],
-    completed: Option[Boolean],
-    url: Option[String],
-    order: Option[Int]
-) derives JsonRW
-
-//  responses
-case class TodoResponse(
-    title: String,
-    completed: Boolean,
-    url: String,
-    order: Option[Int]
-) derives JsonRW
