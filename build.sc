@@ -5,7 +5,7 @@ object app extends ScalaModule {
 
   def mainClass = T(Some("ba.sake.todo.backend.main"))
 
-  def scalaVersion = "3.3.1"
+  def scalaVersion = "3.4.1"
 
   def scalacOptions = super.scalacOptions() ++ Seq(
     "-Yretain-trees",
@@ -14,7 +14,7 @@ object app extends ScalaModule {
   )
 
   def ivyDeps = Agg(
-    ivy"ba.sake::sharaf:0.0.17",
+    ivy"ba.sake::sharaf:0.4.0",
     ivy"ch.qos.logback:logback-classic:1.4.6"
   )
 
