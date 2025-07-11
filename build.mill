@@ -1,0 +1,24 @@
+//| mill-version: 1.0.0
+package build
+
+import mill.*
+import mill.scalalib.*
+
+object app extends ScalaModule {
+
+  def mainClass = Task(Some("ba.sake.todo.backend.main"))
+
+  def scalaVersion = "3.7.1"
+
+  def scalacOptions = super.scalacOptions() ++ Seq(
+    "-Yretain-trees",
+    "-deprecation",
+    "-Wunused:all"
+  )
+
+  def mvnDeps = Seq(
+    mvn"ba.sake::sharaf-undertow:0.13.0",
+    mvn"ch.qos.logback:logback-classic:1.4.6"
+  )
+
+}
