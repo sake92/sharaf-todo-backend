@@ -2,18 +2,16 @@ package ba.sake.todo.backend
 
 import java.net.InetSocketAddress
 import java.util.UUID
-import com.typesafe.config.ConfigFactory
 import ba.sake.sharaf.*
 import ba.sake.potateh.ServerConfig
 import ba.sake.sharaf.potateh.PotatehSharafServer
 import ba.sake.tupson.*
-import ba.sake.tupson.config.*
 import ba.sake.validson.*
 
 @main def main(): Unit = {
 
-  val config = ConfigFactory.load.parseConfig[TodoBackendConfig]
-  val todosRepo = new TodosRepo(config.baseUrl)
+  val baseUrl = sys.env.getOrElse("BASE_URL", "http://localhost:8181")
+  val todosRepo = new TodosRepo(baseUrl)
 
   val routes = Routes {
     case GET -> Path() =>
@@ -51,6 +49,3 @@ import ba.sake.validson.*
   )
   println(s"Started HTTP server at http://localhost:${port}")
 }
-
-// app config
-case class TodoBackendConfig(baseUrl: String) derives JsonRW

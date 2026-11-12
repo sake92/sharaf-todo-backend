@@ -8,12 +8,15 @@ Thanks to northflank.com ! <3
 
 ---
 
-Run from repo root:
+Build and run from the repo root (requires JDK 21, Clang and OpenSSL development libraries):
 
 ```sh
-sbt run
+sbt nativeLink
+./target/native/sharaf-todo-backend
 ```
 
+
+Set `BASE_URL` to the public server URL when it differs from `http://localhost:8181`.
 
 ## testing at todobackend.com
 
