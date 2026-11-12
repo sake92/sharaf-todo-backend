@@ -10,10 +10,8 @@ Thanks to northflank.com ! <3
 
 Run from repo root:
 
-```scala
-
-./mill examples.todo.run
-
+```sh
+sbt run
 ```
 
 
