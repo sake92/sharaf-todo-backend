@@ -1,9 +1,7 @@
 package ba.sake.todo.backend
 
-import java.net.InetSocketAddress
 import java.util.UUID
 import ba.sake.sharaf.*
-import ba.sake.potateh.ServerConfig
 import ba.sake.sharaf.potateh.PotatehSharafServer
 import ba.sake.tupson.*
 import ba.sake.validson.*
@@ -42,10 +40,12 @@ import ba.sake.validson.*
   }
 
   val port = 8181
-  PotatehSharafServer.start(
-    ServerConfig.Default.withBindAddress(new InetSocketAddress("0.0.0.0", port)),
+  val server = PotatehSharafServer(
     routes,
-    CorsSettings.default.withAllowedOrigins(Set("https://todobackend.com"))
+    host = "0.0.0.0",
+    port = port,
+    corsSettings = CorsSettings.default.withAllowedOrigins(Set("https://todobackend.com"))
   )
+  server.start()
   println(s"Started HTTP server at http://localhost:${port}")
 }
